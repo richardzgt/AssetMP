@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}仪表盘{% endblock %}
+
+{% block css %}
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+
+{% endblock %}
+
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        仪表盘
+        <small>dashboard</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">仪表盘</li>
+      </ol>
+    </section>
+
+{% endblock %}
+
+{% block script %}
+    <!-- AdminLTE App -->
+    <!-- SlimScroll 1.3.0 -->
+    <script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
+
+    <!-- FastClick -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <script src="{% static 'bower_components/jquery-knob/js/jquery.knob.js' %}"></script>
+    <!-- page script -->
+{% endblock %}

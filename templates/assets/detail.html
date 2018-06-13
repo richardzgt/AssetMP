@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load mytags %}
+{% load staticfiles %}
+{% block title %}资产详细{% endblock %}
+{% block css %}
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        资产详细
+        <small>asset info</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li>资产总表</li>
+        <li class="active">资产详细</li>
+      </ol>
+    </section>
+
+
+
+    <div class="row">
+      <div class="col-xs-6">
+          <div class="box-body">
+              <div class="ibox-content ibox-heading">
+                  <small><i class="fa fa-map-marker"></i> 此主机详细信息.</small>
+              </div>
+              <div class="ibox-content">
+                <div class="text-left">
+                  <table class="table table-striped table-bordered table-hover ">
+                    <tr>
+                      <td class="text-center">主机名</td>
+                      <td>{{ asset.hostname }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">IP</td>
+                      <td>{{ asset.ipadd }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">设备类型</td>
+                      <td>{{ asset.machine_type.name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">管理网ip</td>
+                      <td>{{ asset.manager_ip }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">远控卡ip</td>
+                      <td>{{ asset.remote_card_ip }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">厂家</td>
+                      <td>{{ asset.manufacturer.name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">产品型号</td>
+                      <td>{{ asset.product_name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">序列号</td>
+                      <td>{{ asset.serial_number }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">供应商</td>
+                      <td>{{ asset.suppliers }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">签约时间</td>
+                      <td>{{ asset.sign_time }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">过保时间</td>
+                      <td>{{ asset.expire_time }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">IDC机房</td>
+                      <td>{{ asset.idc.name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">所属公司</td>
+                      <td>{{ asset.belong }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">所属平台</td>
+                      <td>{{ asset.platform }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">维保单位</td>
+                      <td>{{ asset.sign_dep }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">CPU</td>
+                      <td>{{ asset.cpu }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">磁盘</td>
+                      <td>{{ asset.disk }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">内存</td>
+                      <td>{{ asset.memory }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">过保时间</td>
+                      <td>{{ asset.expire_time }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">系统版本</td>
+                      <td>{{ asset.system_version }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">机柜号</td>
+                      <td>{{ asset.cabinet }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">U高</td>
+                      <td>{{ asset.uhight }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">导轨位置</td>
+                      <td>{{ asset.railnum }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">资产编号</td>
+                      <td>{{ asset.number }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">设备状态</td>
+                      <td>{{ asset.status.name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">备注</td>
+                      <td>{{ asset.describe }}</td>
+                    </tr>
+                  </table>
+                  
+                </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="box-body">
+            <div class="ibox-content ibox-heading">
+                <small><i class="fa fa-map-marker"></i> 此主机操作记录</small>
+            </div>
+            <div class="ibox-content">
+              <div class="text-left">
+                <table class="table table-striped table-bordered table-hover ">
+                    {% for log in asset_logs%}
+                    <tr>
+                      <td class="text-center">操作用户</td>
+                      <td>{{ log.user.username }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">操作类型</td>
+                      <td>{{ log.action_flag }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">操作时间</td>
+                      <td>{{ log.action_time|date:"Y-m-d H:i:s" }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">变更日志</td>
+                      <td>{{ log.change_message }}</td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: yellowgreen"></td>
+                      <td style="background-color: yellowgreen"></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <hr style="border:1 dashed #987cb9" width="80%" color=#987cb9 SIZE=1>
+              </div>
+            </div>
+
+    </div>
+  </div>
+
+<!--     <h3>{{ asset.hostname }}</h3>
+    {% for log in asset_logs %}
+      <p>{{ log.user.username }}</p>
+      <p>{{ log.action_flag }}</p>
+      <p>{{ log.action_time|date:"Y-m-d H:i:s" }}</p>
+      <p>{{ log.change_message }}</p>
+    {% endfor %}
+ -->
+{% endblock %}
+
+{% block script %}
+    <!-- SlimScroll -->
+    <script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- page script -->
+{% endblock %}
+

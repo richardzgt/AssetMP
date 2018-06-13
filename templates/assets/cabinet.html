@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load mytags %}﻿​
+{% load staticfiles %}
+{% block title %}机架图{% endblock %}
+
+{% block css %}
+        <style>
+            *{
+                margin:0;
+                padding: 0
+            }
+            .data-table{
+                background:url('/static/cabinetmaps/table.gif') no-repeat;
+                background-size: cover;
+                padding: 50px;
+                padding-top: 54px;
+                width: 300px;
+                border-collapse:initial;
+            }
+            .data-table tr,.data-table td,.data-table th{
+                text-align: center;
+                font-size: 0;
+                height: 20px;
+                border: 1px dashed #7e8996;
+            }
+            .timg{
+                width: 100%;
+                height: 20px;
+                display: inline-block;
+            }
+            .u2server .timg{
+                height: 40px;
+
+            }
+            .u4server .timg{
+                height: 80px;
+
+            }
+            .rackname{
+                font-size: 30px
+            }
+            .rack{
+                float: left;
+            }
+            .racks{
+              overflow: auto;
+              padding-bottom: 10px
+            }
+            .tooltip-wrap{
+                background: #fff;
+                min-width: 100px;
+                min-height: 100px;
+                position: absolute;
+                z-index: 99;
+                border-radius: 3px;
+                box-shadow: 0 0 1px
+            }
+            .hide{
+                display: none
+            }
+            .select-btn{
+                padding: 20px;
+
+            }
+        </style>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'bower_components/datatables.net-bs/css/dataTables.bootstrap.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        机架图
+        <small>cabinet maps</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">机架图</li>
+      </ol>
+    </section>
+
+    <div class="select-btn">
+      <label>
+          <select id="idc" name="idc" class="btn btn-warning dropdown-toggle">
+              <option value="">机房</option>
+              {% for idc in idc_all %}
+                  {% ifequal idc.id|int2str idc_id %}
+                      <option value="{{idc.id}}" selected> {{ idc.name|slice:":20" }}</option>
+                  {% else %}
+                      <option value="{{idc.id}}"> {{ idc.name|slice:":20" }}</option>
+                  {% endifequal %}
+              {% endfor %}
+          </select>
+      </label>
+    <div class="col-sm-3" style="float:right;text-align: right;">
+      <div class="input-group">
+        <input type="text" class="form-control" id="search_input" name="keyword" value="{{ keyword }}" placeholder="Search">
+        <span class="input-group-btn"><button id='search_btn' type="button" class="btn btn-info btn-flat">  
+              - 搜索 -
+        </button></span>
+      </div>
+    </div>
+    </div>
+
+    <div name="racks" class="racks">
+      <div style="width: 2000px">
+        <!-- {% autoescape off %} -->
+        {{ rack_rail_template }}
+        <!-- {% endautoescape %} -->
+        <div style="display: inline-block;width:  100px;height:  100px;"></div>
+      </div>
+    </div>
+{% endblock %}
+
+
+
+{% block script %}    
+    <!-- SlimScroll -->
+    <script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- page script -->
+    <script type="text/javascript">
+        var Klass={
+
+            init:function () {
+                this.table = $('.data-table');
+
+                this.initTable();
+                this.initSelect();
+                this.initToolTip();
+            },
+            initTable:function () {
+                this.table.on('mouseover','[data-name="img"]',function() {
+
+                    Klass.queryData($(this));
+
+
+                }).on('mouseleave','[data-name="img"]',function() {
+                    Klass.hideTooltip($(this));
+                }).on('click','[data-name="img"]',function() {
+                    window.location.href="{% url 'assets' %}?id=" + $(this).attr("id")
+                });
+            },
+            initToolTip:function () {
+                $('body').on('mouseover','.tooltip-wrap',function () {
+
+                    clearInterval(Klass.hideTimer);
+                }).on('mouseleave','.tooltip-wrap',function () {
+
+                    Klass.hideTooltip();
+                });
+            },
+            queryData:function (dom) {
+                //ajax请求
+                $.getJSON('/cabinet/', {'id':dom.attr("id")}, function(data){
+                  //成功后的回调函数
+                  // console.log(data.message)
+                  if(data.status == 'success'){
+                    data = JSON.parse(data.message)[0];
+                    Klass.getCorp(dom,data)
+                    
+                  };
+                })
+            },
+            showToolTip:function (dom,data,corp) {
+                var _offset = dom.offset();
+                var _width = dom.width();
+                var _height = dom.height();
+                var top = _offset.top;
+                var left = _offset.left;
+                if(!Klass.toolTipWrap){
+
+                    Klass.toolTipWrap = $('<div class="tooltip-wrap"></div>')
+                    $('body').append(Klass.toolTipWrap);
+                }
+
+                Klass.toolTipWrap.css(
+                    {
+                        top:top+'px',
+                        left: left+_width+'px'
+                    }
+                );
+                // data = JSON.parse(data)[0];
+                // Klass.toolTipWrap.html("<p>"+data.hostname+"</p>"+"<p>"+data.serial_number+"</p>")
+                // console.log("starting")
+                // var corp = Klass.getCorp(data.fields.belong,data)
+                // console.log(corp)
+                // console.log("ending")
+                if(corp){
+                    corp_name=corp.fields.name;
+                } else {
+                    corp_name="Null";
+                }
+                summary = "<p style='font-size: 18px'>"+data.fields.hostname+"</p>" +"<p>SN:&nbsp"+data.fields.serial_number+"<p>机架位置:&nbsp"+data.fields.railnum+"</p>"+"<p>所属公司:&nbsp"+corp_name+"</p>"                
+                Klass.toolTipWrap.html(summary)
+                clearInterval(this.hideTimer)                
+                Klass.toolTipWrap.removeClass('hide');
+
+            },
+            hideTooltip:function () {
+                if(this.hideTimer){
+                    clearInterval(this.hideTimer);
+                }
+                this.hideTimer = setTimeout(function () {
+                    Klass.toolTipWrap.addClass('hide');
+                },500)
+            },
+            initSelect:function(){
+              $('#idc').on('change',function(){
+                var idc_id = $(this).val();
+                location.href= "{% url 'cabinet' %}?idc_id="+idc_id
+              })
+            },
+            getCorp:function(dom,_data){
+                // var corp_id=0
+                (_data.fields.belong)?corp_id=_data.fields.belong:corp_id=0;
+                $.getJSON('/getCorp/', {'corp_id':corp_id}, function(val){
+                    // success:func
+                    if(val.status == 'success'){
+                        var corp = JSON.parse(val.message)[0];
+                        console.log(corp);
+                        Klass.showToolTip(dom,_data,corp);
+                    } else {
+                        alert("get corp error");
+                    }
+                    })
+            },
+        }
+
+
+      
+      function ReqtoSer(){
+        var keyword = $("#search_input").val();
+        var idc_id = $("#idc").val();
+        window.location.href="{% url 'cabinet' %}?keyword=" + keyword + "&idc_id="+ idc_id;
+        }
+
+
+      $(function () {          
+            Klass.init();
+            $("#search_btn").click(function(){
+                ReqtoSer();
+            })
+            $("#search_input").keydown(function(e){
+                if(e.keyCode==13){
+                    ReqtoSer();
+                }
+            })
+        })
+    </script>
+
+{% endblock %}

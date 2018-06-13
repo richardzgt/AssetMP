@@ -1,0 +1,7 @@
+*.log
+*.pyc
+*.so
+*.egg
+*.egg-info
+build
+*.log

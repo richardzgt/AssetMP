@@ -1,0 +1,4 @@
+django==1.8
+MySQL-python
+celery
+django-celery
