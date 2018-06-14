@@ -24,7 +24,7 @@
 nohup python manage.py  runserver 0.0.0.0:8080 &
 
 
-![p1](https://github.com/richardzgt/AssetMP/install/pic/20180614095254.png)
-![p2](https://github.com/richardzgt/AssetMP/install/pic/20180614095520.png)
-![p3](https://github.com/richardzgt/AssetMP/install/pic/20180614095600.png)
-![p4](https://github.com/richardzgt/AssetMP/install/pic/20180614095649.png)
+![p1](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095254.png)
+![p2](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095520.png)
+![p3](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095600.png)
+![p4](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095649.png)
