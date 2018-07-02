@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^detail/', AssetDetail.as_view(), name='asset_detail'),
     url(r'^vmscreate/', VmsCreate.as_view(), name='vms_create'),
     url(r'^getCorp/', getCorp.as_view(), name='getCorp'),
+    url(r'^test/', test.as_view(), name='test'),
     url(r'^nginxadmin', include('nginxadmin.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

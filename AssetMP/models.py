@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: richard
 # @Date:   2018-04-10 19:13:25
-# @Last Modified by:   gaotao
-# @Last Modified time: 2018-05-16 10:39:28
+# @Last Modified by:   richardzgt﻿​
+# @Last Modified time: 2018-07-02 16:09:27
 # Purpose: 
 # 
 from django.db import models
@@ -80,6 +80,7 @@ class IDC(models.Model):
     date_added = models.DateField(auto_now=True, null=True)
     operator = models.CharField(max_length=32, blank=True, default='', null=True, verbose_name=u"运营商")
     comment = models.CharField(max_length=128, blank=True, default='', null=True, verbose_name=u"备注")
+    needed_cabinet = models.BooleanField(default=True,verbose_name=u"是否需要渲染机架图")
 
     def __unicode__(self):
         return self.name

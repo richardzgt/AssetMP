@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '-awfhnhq5*h61dv4dv6^^3592&5_-2aky38fs(&gc(l(gevw(v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -86,10 +86,6 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-STATIC_ROOT = (  
-    os.path.join(BASE_DIR, 'static').replace('\\','/')    
-)  
-
 
 if DEBUG:
     DATABASES = {
@@ -103,6 +99,9 @@ if DEBUG:
             'CONN_MAX_AGE': 60,  # 空闲超时关闭数据库连接, 0 表示使用完马上关闭，None 表示不关闭
     }}
 else:
+    STATIC_ROOT = (  
+    os.path.join(BASE_DIR, 'static').replace('\\','/')    
+    )
     DATABASES = {
         'default': { #amp
             'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.

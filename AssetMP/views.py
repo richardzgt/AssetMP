@@ -1,20 +1,36 @@
 # -*- coding: utf-8 -*-
 # @Author: richard
 # @Date:   2018-04-10 18:28:30
-# @Last Modified by:   gaotao
-# @Last Modified time: 2018-05-21 13:04:25
+# @Last Modified by:   richardzgt﻿​
+# @Last Modified time: 2018-07-02 16:52:12
 # Purpose: 
 # 
 
 
 from django.shortcuts import get_object_or_404,render_to_response,HttpResponseRedirect,render
-from django.http import JsonResponse, HttpResponse, Http404,QueryDict
+from django.http import JsonResponse, HttpResponse,Http404,QueryDict
 from django.template import RequestContext
 from AssetMP.models import *
 from django.db.models import Q
 from AssetMP.api import get_rack_rail_template,logger,json_returner,pages
 from django.views.generic import View,TemplateView, ListView, RedirectView, FormView
 from django.contrib.admin.models import LogEntry,ADDITION,DELETION,CHANGE,ContentType
+from django.db import transaction
+
+class test(View):
+    """docstring for test"""
+    def get(self,request):
+        try:
+            with transaction.atomic():
+                MachineType.objects.create(name="test1")
+                print "hhahah"
+                assert 1==2
+                ManType.objects.create(name="t1")
+        except Exception as e:
+            logger.error(e)
+            return  HttpResponse("error %s" % e)    
+        return   HttpResponse("ok")    
+
 
 class Assets(View):
     def get(self, request):
@@ -90,7 +106,7 @@ class Cabinet(View):
             server = Asset.objects.filter(id=server_id)
             return json_returner(server)
 
-        _idc_all = set([ i.idc for i in Asset.objects.all() ])
+        _idc_all = set([ i.idc for i in Asset.objects.filter(idc__needed_cabinet=True) ])
         idc_all = list(_idc_all)
         if idc_id:
             idc = IDC.objects.get(id=idc_id)
