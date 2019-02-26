@@ -2,45 +2,16 @@
 # @Author: richard
 # @Date:   2018-04-10 19:13:25
 # @Last Modified by:   richardzgt﻿​
-# @Last Modified time: 2018-07-02 16:09:27
+# @Last Modified time: 2018-10-12 10:34:08
 # Purpose: 
 # 
 from django.db import models
 from django.forms import ModelForm
 from django.db.models import Count,F
 from django.db.models.query import QuerySet,Q
+from django.utils.html import format_html
+import pytz,datetime
 
-
-# MACHINE_TYPE = (
-#     (1, U'物理机'),
-#     (2, U'防火墙'),
-#     (3, U'交换机'),
-#     (4, U'路由器'),
-#     (5, U'数据库'),
-#     (6, U'其他'),
-#     )
-
-# MAN_TYPE = (
-#     (1, U'DELL'),
-#     (2, U'易星'),
-#     (3, U'沃趣'),
-#     (4, U'H3C'),
-#     (5, U'金盾'),
-#     )
-
-# AREA_TYPE = (
-#     (1, U'兴议'),
-#     (2, U'三墩'),
-#     (3, U'嘉兴'),
-#     (4, U'金华'),
-#     (5, U'西溪'),
-#     )
-
-# ASSET_STATUS = (
-#     (1, u"已使用"),
-#     (2, u"未使用"),
-#     (3, u"报废")
-#     )
 
 
 class MachineType(models.Model):
@@ -113,12 +84,26 @@ class Belong(models.Model):
         verbose_name = u"所属公司"
         
 
+class SignDep(models.Model):
+    """维保单位"""
+    name = models.CharField(max_length=32, verbose_name=u'维保公司名称')
+    contact = models.CharField(max_length=32, verbose_name=u'联系人')
+    phone = models.CharField(max_length=32, verbose_name=u'联系方式')
+    describe = models.CharField(max_length=60,blank=True, null=True, verbose_name=u'备注')
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"维保单位"
+        
+
 class Asset(models.Model):
     """
     设备信息表
     """
-    machine_type = models.ForeignKey(MachineType, on_delete=models.DO_NOTHING, verbose_name=u"设备类型")
     hostname = models.CharField(max_length=50,blank=True, null=True)
+    machine_type = models.ForeignKey(MachineType, on_delete=models.DO_NOTHING, verbose_name=u"设备类型")
     ipadd = models.CharField(max_length=20,blank=True, null=True)
     manager_ip = models.CharField(max_length=20,blank=True, null=True, verbose_name=u'管理网ip')
     remote_card_ip = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'远控卡ip')
@@ -126,12 +111,13 @@ class Asset(models.Model):
     product_name = models.CharField(max_length=20,verbose_name=u'设备型号')
     serial_number = models.CharField(max_length=20,unique=True,verbose_name=u'序列号')
     suppliers = models.CharField(max_length=32,blank=True, null=True, verbose_name=u'供应商')
-    sign_time = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'签约时间')
-    expire_time = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'过期时间')
+    purchase_at = models.DateField(auto_now=True, auto_now_add=False,verbose_name=u'购买时间')
     department = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'使用部门')
     idc = models.ForeignKey(IDC, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'机房')
     platform =  models.ForeignKey(Platform, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'平台名称')
-    sign_dep = models.CharField(max_length=20,blank=True, null=True,verbose_name=u"维保单位")
+    sign_dep =  models.ForeignKey(SignDep, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'维保单位')
+    sign_time = models.DateField(auto_now=False, auto_now_add=False,blank=True, null=True,verbose_name=u'维保签约时间')
+    expire_time = models.DateField(auto_now=False, auto_now_add=False,blank=True, null=True,verbose_name=u'维保过期时间')
     belong =  models.ForeignKey(Belong, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'所属公司')
     cpu = models.CharField(max_length=60,blank=True, null=True)
     disk = models.CharField(max_length=60,blank=True, null=True)
@@ -147,8 +133,28 @@ class Asset(models.Model):
     def __unicode__(self):
         return self.hostname
 
+    def expire_time_status(self):
+        # try:
+        if self.expire_time:
+            now = datetime.date.today()
+            off_guarantee = now > self.expire_time 
+            display_time = self.expire_time.strftime('%Y-%m-%d')
+            if off_guarantee:
+                color_code = 'red'
+            else:
+                color_code = 'green'
+            return format_html('<span style="color: {};">{}</span>',
+                    color_code,
+                    display_time)
+        # except Exception as e :
+            # return "[ERR] %s" % str(e)
+
+    expire_time_status.short_description = u"过保时间"
+
     class Meta:
         verbose_name = u"设备信息表"
+
+
 
 class AssetRecord(models.Model):
     """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: richard
 # @Date:   2018-04-12 15:39:37
-# @Last Modified by:   高涛
-# @Last Modified time: 2018-05-31 11:27:51
+# @Last Modified by:   richardzgt﻿​
+# @Last Modified time: 2018-11-29 15:54:06
 # Purpose: 
 
 
@@ -11,11 +11,19 @@ from models import *
 from django.contrib.admin.models import LogEntry
 import json
 
+
+admin.site.site_header = 'AMP资产管理系统'  # 此处设置页面显示标题
+admin.site.site_title = 'AMP资产管理系统'  # 此处设置页面头部标题
+        
+
 class AssetMPAdmin(admin.ModelAdmin):
     list_display = [ field.name for field in Asset._meta.fields ]
+    list_display.remove('id')
+    list_display.remove('expire_time')
+    list_display.insert(15,'expire_time_status')  # 第15个槽位插入
     # list_display = ('hostname','idc','ipadd','serial_number')
     list_filter = ('machine_type','idc','product_name','manufacturer')
-
+    search_fields = ['serial_number']
 
 class IDCAdmin(admin.ModelAdmin):
     list_display = ('name','comment')
@@ -47,6 +55,10 @@ class BelongAdmin(admin.ModelAdmin):
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = ('user','content_type',)
 
+class SignDepAdmin(admin.ModelAdmin):
+    list_display = ('name','contact','phone','describe')
+        
+
 
 admin.site.register(Asset,AssetMPAdmin)
 admin.site.register(IDC,IDCAdmin)
@@ -56,6 +68,7 @@ admin.site.register(ManType,ManTypeAdmin)
 admin.site.register(AssetStatus,AssetStatusAdmin)
 admin.site.register(LogEntry,LogEntryAdmin)
 admin.site.register(Belong, BelongAdmin)
+admin.site.register(SignDep, SignDepAdmin)
 
 
 

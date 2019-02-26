@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: richard
 # @Date:   2018-04-11 14:35:54
-# @Last Modified by:   gaotao
-# @Last Modified time: 2018-05-21 12:09:58
+# @Last Modified by:   richardzgt﻿​
+# @Last Modified time: 2018-09-05 14:31:00
 # Purpose: 
 # 
 
@@ -154,7 +154,9 @@ def get_rack_rail_template(idc,assets):
                         _sf = copy.deepcopy(sf)
                         _sf = _sf % ass.id
                         s += _sf
-                        count_rail -= 1                        
+                        count_rail -= 1
+                    else:
+                        return False                        
             if flag == 0:        
                 s += sb
                 count_rail -= 1

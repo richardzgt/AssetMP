@@ -118,6 +118,11 @@ LOG_LEVEL = "debug"
 MAX_CABINET_ROWS_NUM = 6
 
 
+# 设置admin 里面的默认时间格式
+USE_L10N = False
+DATETIME_FORMAT = 'Y-m-d H:i:s'
+DATE_FORMAT = 'Y-m-d'
+
 # 导入 django-celery模块
 # import djcelery
 # djcelery.setup_loader()

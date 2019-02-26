@@ -75,12 +75,20 @@
                       <td>{{ asset.suppliers }}</td>
                     </tr>
                     <tr>
-                      <td class="text-center">签约时间</td>
-                      <td>{{ asset.sign_time }}</td>
+                      <td class="text-center">购买时间</td>
+                      <td>{{ asset.purchase_at|date:"Y-m-d" }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">维保单位</td>
+                      <td>{{ asset.sign_dep }}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-center">维保签约时间</td>
+                      <td>{{ asset.sign_time|date:"Y-m-d" }}</td>
                     </tr>
                     <tr>
                       <td class="text-center">过保时间</td>
-                      <td>{{ asset.expire_time }}</td>
+                      <td>{{ asset.expire_time_status }}</td>
                     </tr>
                     <tr>
                       <td class="text-center">IDC机房</td>
@@ -95,10 +103,6 @@
                       <td>{{ asset.platform }}</td>
                     </tr>
                     <tr>
-                      <td class="text-center">维保单位</td>
-                      <td>{{ asset.sign_dep }}</td>
-                    </tr>
-                    <tr>
                       <td class="text-center">CPU</td>
                       <td>{{ asset.cpu }}</td>
                     </tr>
@@ -109,10 +113,6 @@
                     <tr>
                       <td class="text-center">内存</td>
                       <td>{{ asset.memory }}</td>
-                    </tr>
-                    <tr>
-                      <td class="text-center">过保时间</td>
-                      <td>{{ asset.expire_time }}</td>
                     </tr>
                     <tr>
                       <td class="text-center">系统版本</td>

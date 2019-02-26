@@ -24,6 +24,11 @@
 nohup python manage.py  runserver 0.0.0.0:8080 &
 
 
+5 更新:
+  增加维保供应商
+  将admin管理中,资产过维保日期的标红
+  
+
 ![p1](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095254.png)
 ![p2](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095520.png)
 ![p3](https://github.com/richardzgt/AssetMP/blob/master/install/pic/20180614095600.png)
