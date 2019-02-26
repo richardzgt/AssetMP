@@ -5,3 +5,5 @@
 *.egg-info
 build
 *.log
+.git*
+.git
