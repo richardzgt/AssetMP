@@ -40,8 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'AssetMP',
     'vms',
-    'nginxadmin',
-    # 'djcelery',
 )
 
 MIDDLEWARE_CLASSES = (

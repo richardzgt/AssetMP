@@ -47,6 +47,7 @@ def set_log(level, filename='AssetMP.log'):
     logger_f.addHandler(fh)
     return logger_f
 
+logger = set_log(LOG_LEVEL)
 
 def json_returner(data=''):
     if isinstance(data,(QuerySet,dict)):
@@ -69,7 +70,7 @@ def get_rack_rail_template(idc,assets):
     cabinets = group_by(all_assets,'cabinet')
     cabinets_template = ""
 
-
+    logger.debug("all_assets[%s] to render", all_assets)
     for cabinet in sorted(cabinets):
         all_cab_ass = all_assets.filter(cabinet=cabinet)
 
@@ -211,11 +212,6 @@ def pages(post_objects, request):
            # 所有对象， 分页器， 本页对象， 所有页码， 本页页码，是否显示第一页，是否显示最后一页
     return post_objects, paginator, page_objects, page_range, current_page, show_first, show_end
 
-
-
-
-
-logger = set_log(LOG_LEVEL)
 
 
 

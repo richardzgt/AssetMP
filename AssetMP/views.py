@@ -73,7 +73,7 @@ class AssetDetail(View):
         try:
             server_id = request.GET.get('id','')
             asset = Asset.objects.get(id=server_id)
-            _all_asset_logs = LogEntry.objects.filter(content_type=ContentType.objects.get(model='Asset'))
+            _all_asset_logs = LogEntry.objects.filter(content_type=ContentType.objects.get(model__iexact='Asset'))
             asset_logs = _all_asset_logs.filter(object_id=server_id)
             # for log in asset_logs:
                 # setattr(log, )
@@ -84,6 +84,7 @@ class AssetDetail(View):
                 if log.action_flag == CHANGE: flag = "修改"
                 setattr(log, 'action_flag', flag)
         except Exception as e:
+            logger.error(e)
             return HttpResponse('error')
         return render(request,'assets/detail.html', locals())
         
