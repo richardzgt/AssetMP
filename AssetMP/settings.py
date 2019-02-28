@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'AssetMP',
-    'vms',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,3 +129,73 @@ DATE_FORMAT = 'Y-m-d'
 
 
 VC_CONFIG=('vcenter.config.net','administrator@vcenter.config.net','huoRED8818!!')
+
+
+LOGGING = {
+    "version": 1,
+    'disable_existing_loggers': False,
+
+    "loggers":{
+        "bench": {
+            "level": "DEBUG",
+            "handlers": ["file_handle"],
+            'propagate': True,
+        },
+
+        "django":{
+            "level": "DEBUG",
+            "handlers": [ "django_handle"],
+            'propagate': True,# 选择关闭继承，不然这个logger继承自默认，日志就会被记录2次了(''一次，自己一次)
+        },
+
+        "report":{
+            "level": "ERROR",
+            "handlers": [ "mail"],
+            'propagate': True,
+        }
+    },
+
+    "handlers": {
+
+        "file_handle": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "bench.log"),
+            "formatter": "standard"
+        },
+
+        "django_handle": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "django.log"),
+            "formatter": "standard"
+        },
+
+        'django_request_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, "logs", 'request.log'),
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+
+        "mail":{
+            "class": "logging.handlers.SMTPHandler",
+            "level": "ERROR",
+            "formatter": "simple",
+            "mailhost":("smtp.139.com", 25),
+            "fromaddr":"xxxxx@139.com",
+            "toaddrs":["xxxxx@qq.com"],
+            "subject" : "devops mail",
+            "credentials" :("xxxx@139.com","password")
+        }
+    },
+
+    'formatters': {
+        'standard':{
+            'format': '[%(asctime)s] [%(process)d] [%(thread)d] [%(filename)8s:%(lineno)4d] [%(levelname)-6s] %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s %(levelname)s %(message)s'
+        }
+    },
+}

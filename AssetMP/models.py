@@ -13,22 +13,12 @@ from django.utils.html import format_html
 import pytz,datetime
 
 
-
-class MachineType(models.Model):
-    name = models.CharField(max_length=32)
-    detail = models.CharField(max_length=32, blank=True, null=True)
-    describe = models.CharField(max_length=60,blank=True, null=True, verbose_name=u'备注')
-    class Meta:
-        verbose_name = u"主机使用类型"
-    def __unicode__(self):
-        return self.name
-
 class ManType(models.Model):
     name = models.CharField(max_length=32)
     detail = models.CharField(max_length=32, blank=True, null=True)
     describe = models.CharField(max_length=60,blank=True, null=True, verbose_name=u'备注')
     class Meta:
-        verbose_name = u"厂家信息"
+        verbose_name = verbose_name_plural = u"厂家信息"
     def __unicode__(self):
         return self.name
 
@@ -37,7 +27,7 @@ class AssetStatus(models.Model):
     detail = models.CharField(max_length=32, blank=True, null=True)
     describe = models.CharField(max_length=60,blank=True, null=True, verbose_name=u'备注')
     class Meta:
-        verbose_name = u"设备状态"
+        verbose_name = verbose_name_plural = u"设备状态"
     def __unicode__(self):
         return self.name
 
@@ -57,7 +47,7 @@ class IDC(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u"IDC机房"
+        verbose_name = verbose_name_plural = u"IDC机房"
 
 
 class Platform(models.Model):
@@ -69,7 +59,7 @@ class Platform(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u"平台信息"
+        verbose_name = verbose_name_plural = u"平台信息"
             
 class Belong(models.Model):
     """所属公司"""
@@ -81,7 +71,7 @@ class Belong(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u"所属公司"
+        verbose_name = verbose_name_plural = u"所属公司"
         
 
 class SignDep(models.Model):
@@ -95,15 +85,35 @@ class SignDep(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = u"维保单位"
+        verbose_name = verbose_name_plural = u"维保单位"
         
+class Usage(models.Model):
+    """
+    设备使用类型： 数据库 物理机系统 虚拟机节点 容器主机节点
+    """
+    name = models.CharField(max_length=60)
+    describe = models.CharField(max_length=60,blank=True, null=True, verbose_name=u'备注')
 
 class Asset(models.Model):
     """
     设备信息表
     """
+    MachineType_CHOICE = (
+        (0, u'防火墙'),
+        (1, u'路由器'),
+        (2, u'交换机'),
+        (3, u'物理机'),
+    )
+
+    UHIGH_CHOICE = (
+        (0, 1),
+        (1, 2),
+        (2, 4)
+    )
+
     hostname = models.CharField(max_length=50,blank=True, null=True)
-    machine_type = models.ForeignKey(MachineType, on_delete=models.DO_NOTHING, verbose_name=u"设备类型")
+    machine_type = models.IntegerField(choices=MachineType_CHOICE, verbose_name=u"设备类型")
+    usage = models.ForeignKey(Usage, blank=True, null=True, verbose_name=u"主机使用类型")
     ipadd = models.CharField(max_length=20,blank=True, null=True)
     manager_ip = models.CharField(max_length=20,blank=True, null=True, verbose_name=u'管理网ip')
     remote_card_ip = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'远控卡ip')
@@ -113,7 +123,7 @@ class Asset(models.Model):
     suppliers = models.CharField(max_length=32,blank=True, null=True, verbose_name=u'供应商')
     purchase_at = models.DateField(auto_now=True, auto_now_add=False,verbose_name=u'购买时间')
     department = models.CharField(max_length=20,blank=True, null=True,verbose_name=u'使用部门')
-    idc = models.ForeignKey(IDC, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'机房')
+    idc = models.ForeignKey(IDC, on_delete=models.DO_NOTHING, verbose_name=u'机房')
     platform =  models.ForeignKey(Platform, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'平台名称')
     sign_dep =  models.ForeignKey(SignDep, blank=True, null=True,  on_delete=models.SET_NULL, verbose_name=u'维保单位')
     sign_time = models.DateField(auto_now=False, auto_now_add=False,blank=True, null=True,verbose_name=u'维保签约时间')
@@ -124,7 +134,7 @@ class Asset(models.Model):
     memory = models.CharField(max_length=60,blank=True, null=True)
     system_version = models.CharField(max_length=80, blank=True, null=True, verbose_name=u"操作系统")
     cabinet = models.CharField(max_length=32, verbose_name=u'机柜号')
-    uhight = models.IntegerField(verbose_name=u"u高")
+    uhight = models.IntegerField(choices=UHIGH_CHOICE, default=UHIGH_CHOICE[0][0]  ,verbose_name=u"u高")
     railnum = models.IntegerField(verbose_name=u"导轨位置")
     number = models.CharField(max_length=32, blank=True, null=True, verbose_name=u'资产编号')
     status = models.ForeignKey(AssetStatus, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u"机器状态")
@@ -132,6 +142,7 @@ class Asset(models.Model):
     
     def __unicode__(self):
         return self.hostname
+
 
     def expire_time_status(self):
         # try:
@@ -152,7 +163,7 @@ class Asset(models.Model):
     expire_time_status.short_description = u"过保时间"
 
     class Meta:
-        verbose_name = u"设备信息表"
+        verbose_name = verbose_name_plural = u"设备信息表"
 
 
 

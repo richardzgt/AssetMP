@@ -12,11 +12,12 @@ from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from models import Asset,group_by
 from settings import *
-from pysphere import VITask,VIException,VIServer
+import logging
 import logging
 import json
 import copy
 
+logger = logging.getLogger("bench")
 
 class AmpException(Exception):
     def __init__(self, msg, fault):
@@ -47,7 +48,7 @@ def set_log(level, filename='AssetMP.log'):
     logger_f.addHandler(fh)
     return logger_f
 
-logger = set_log(LOG_LEVEL)
+# logger = set_log(LOG_LEVEL)
 
 def json_returner(data=''):
     if isinstance(data,(QuerySet,dict)):
@@ -130,28 +131,28 @@ def get_rack_rail_template(idc,assets):
                 if count_rail == ass.railnum:
                     flag = 1
                     # if ass.railnum == 35: print ass,"=============="
-                    if ass.machine_type.name in (u'物理机',u'数据库'):
-                        if ass.uhight == 1:
+                    if ass.machine_type == 3:
+                        if ass.get_uhight_display() == 1:
                             _s1 = copy.deepcopy(s1)
                             _s1 = _s1 % ass.id
                             s += _s1
                             count_rail -= 1
-                        elif ass.uhight == 2:
+                        elif ass.get_uhight_display() == 2:
                             _s2 = copy.deepcopy(s2)
                             _s2 = _s2 % ass.id
                             s += _s2 + sm
                             count_rail -= 2
-                        elif ass.uhight == 4:
+                        elif ass.get_uhight_display() == 4:
                             _s4 = copy.deepcopy(s4)
                             _s4 = _s4 % ass.id
                             s += _s4 + sm*3
                             count_rail -= 4
-                    elif ass.machine_type.name in (u'交换机'):
+                    elif ass.machine_type  == 2 :
                         _st = copy.deepcopy(st)
                         _st = _st % ass.id
                         s += _st
                         count_rail -= 1
-                    elif ass.machine_type.name in (u'防火墙',u'路由器'):
+                    elif ass.machine_type in (0 , 1):
                         _sf = copy.deepcopy(sf)
                         _sf = _sf % ass.id
                         s += _sf

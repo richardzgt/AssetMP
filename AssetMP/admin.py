@@ -40,8 +40,6 @@ class IDCAdmin(admin.ModelAdmin):
 class PlatformAdmin(admin.ModelAdmin):
     list_display = ('name','describe')
 
-class MachineTypeAdmin(admin.ModelAdmin):
-    list_display = ('name','describe')
 
 class ManTypeAdmin(admin.ModelAdmin):
     list_display = ('name','describe')
@@ -63,7 +61,6 @@ class SignDepAdmin(admin.ModelAdmin):
 admin.site.register(Asset,AssetMPAdmin)
 admin.site.register(IDC,IDCAdmin)
 admin.site.register(Platform,PlatformAdmin)
-admin.site.register(MachineType,MachineTypeAdmin)
 admin.site.register(ManType,ManTypeAdmin)
 admin.site.register(AssetStatus,AssetStatusAdmin)
 admin.site.register(LogEntry,LogEntryAdmin)
@@ -77,7 +74,6 @@ def recodeDiff(request, object):
     old_dict = object.__dict__
     for field, new in request.POST.items():
         old = old_dict.get(field)
-        print old,new,"======"
         if unicode(old) != unicode(new) and not field.startswith('_'):
             alert_dict.append(u"change field {2}: {1} to {0}".format(old,new,field))
     return alert_dict
